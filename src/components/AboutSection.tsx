@@ -1,20 +1,32 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
-import { Cog, Zap, Building2, RefreshCw, ShieldCheck } from "lucide-react";
+import { Cog, Zap, Building2, RefreshCw, ShieldCheck, User } from "lucide-react";
 import { ThreeDCard } from "./3d/ThreeDCard";
 import { ThreeDIcon } from "./3d/ThreeDIcon";
+import { PortfolioData, parseLines } from "@/hooks/usePortfolioData";
 
-const AboutSection = () => {
+interface AboutSectionProps {
+  data: PortfolioData;
+}
+
+const AboutSection = ({ data }: AboutSectionProps) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
-  const items = [
-    { icon: Cog, title: "ETL/ELT Expertise", text: "4+ years designing and building production-grade ETL/ELT pipelines using Azure Data Factory, Databricks, and PySpark, processing millions of records across batch and incremental workflows." },
-    { icon: Zap, title: "Spark & PySpark Processing", text: "Deep expertise in distributed data processing using Apache Spark, optimizing partitioning strategies and join logic to achieve 25% faster execution times." },
-    { icon: Building2, title: "Lakehouse Architecture", text: "Designed end-to-end lakehouse architectures on ADLS Gen2 with Delta Lake, enabling unified ingestion and transformation of structured and semi-structured data." },
-    { icon: RefreshCw, title: "Real-Time Pipelines", text: "Built event-driven streaming pipelines using Kafka and Spark Structured Streaming, enabling real-time data processing for fraud detection and compliance." },
-    { icon: ShieldCheck, title: "Data Quality Systems", text: "Implemented comprehensive data validation frameworks using Python and SQL, identifying duplicates and schema issues — improving data accuracy by 35%." },
-  ];
+  // Use summary for the primary text if possible, otherwise use experience/project bits
+  const summaryLines = parseLines(data.summary);
+  
+  // Default items if no summary lines found, or map summary areas to icons
+  const icons = [Cog, Zap, Building2, RefreshCw, ShieldCheck];
+  const items = summaryLines.length > 0 
+    ? summaryLines.slice(0, 5).map((text, i) => ({
+        icon: icons[i % icons.length],
+        title: `Expertise Area ${i + 1}`,
+        text: text
+      }))
+    : [
+        { icon: User, title: "Professional Profile", text: data.summary || "Highly skilled professional with extensive experience in the field." }
+      ];
 
   return (
     <section id="about" className="relative py-32 px-6 overflow-hidden" ref={ref}>
@@ -24,7 +36,7 @@ const AboutSection = () => {
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
         >
-          <SectionHeader title="About" accent="Me" subtitle="The Architect" />
+          <SectionHeader title="About" accent={data.personal.name?.split(' ')[0] || "Me"} subtitle="Professional Profile" />
           
           <ThreeDCard>
             <div className="glass rounded-3xl p-10 md:p-16 space-y-10 border border-white/5 shadow-2xl relative overflow-hidden">
@@ -34,7 +46,7 @@ const AboutSection = () => {
               <div className="grid gap-8">
                 {items.map((item, i) => (
                   <motion.div
-                    key={item.title}
+                    key={i}
                     initial={{ opacity: 0, x: -20 }}
                     animate={inView ? { opacity: 1, x: 0 } : {}}
                     transition={{ delay: 0.1 + i * 0.1, duration: 0.5 }}
@@ -74,4 +86,3 @@ export const SectionHeader = ({ title, accent, subtitle }: { title: string; acce
 );
 
 export default AboutSection;
-

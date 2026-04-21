@@ -1,99 +1,123 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { useTheme } from "./ThemeProvider";
-import { Sun, Moon, Menu, X } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { User, Server, Terminal, Github, Linkedin, Briefcase } from "lucide-react";
 
-const navItems = ["About", "Experience", "Projects", "Skills", "Education", "Certifications", "Contact"];
+interface HeaderProps {
+  name: string;
+}
 
-const Header = () => {
+const Header = ({ name }: HeaderProps) => {
   const [scrolled, setScrolled] = useState(false);
-  const [active, setActive] = useState("");
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const { theme, toggleTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const scrollTo = (id: string) => {
-    setActive(id);
-    setMobileOpen(false);
-    document.getElementById(id.toLowerCase())?.scrollIntoView({ behavior: "smooth" });
-  };
+  const navItems = [
+    { label: "About", href: "#about", icon: User },
+    { label: "Work", href: "#experience", icon: Briefcase },
+    { label: "Projects", href: "#projects", icon: Server },
+    { label: "Contact", href: "#contact", icon: Terminal },
+  ];
+
+  // Get initials for logo
+  const initials = name
+    ? name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()
+    : "SA";
 
   return (
-    <motion.header
-      initial={{ y: -80 }}
-      animate={{ y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
-      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-500 ${
-        scrolled ? "bg-background/80 backdrop-blur-2xl border-b border-white/5 shadow-2xl py-3" : "bg-transparent py-5"
+    <header 
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        scrolled ? "py-4 bg-background/80 backdrop-blur-xl border-b border-white/5" : "py-8 bg-transparent"
       }`}
     >
-      <nav className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <button onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })} className="font-heading font-bold text-xl gradient-text">
-          SA
-        </button>
-        <div className="hidden md:flex items-center gap-8">
-          {navItems.map((item) => (
-            <button
-              key={item}
-              onClick={() => scrollTo(item)}
-              className="relative text-sm font-body text-muted-foreground hover:text-foreground transition-colors group"
-            >
-              {item}
-              <span className={`absolute -bottom-1 left-0 h-px bg-teal transition-all duration-300 ${
-                active === item ? "w-full" : "w-0 group-hover:w-full"
-              }`} />
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center gap-3">
-          {/* Theme toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg border border-border/50 text-muted-foreground hover:text-foreground hover:border-teal/50 transition-all icon-3d"
-            aria-label="Toggle theme"
-          >
-            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-          </button>
-          <a
-            href="#contact"
-            onClick={(e) => { e.preventDefault(); scrollTo("Contact"); }}
-            className="hidden md:inline-block text-xs font-body px-4 py-2 rounded-md border border-teal/30 text-teal hover:bg-teal/10 transition-all"
-          >
-            Get in Touch
-          </a>
-          {/* Mobile menu */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-muted-foreground"
-          >
-            {mobileOpen ? <X size={20} /> : <Menu size={20} />}
-          </button>
-        </div>
-      </nav>
-      {/* Mobile dropdown */}
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="md:hidden glass border-t border-border/30 px-6 py-4 space-y-3"
+      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        
+        {/* LOGO */}
+        <motion.a 
+          href="/"
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="flex items-center gap-3 group"
         >
-          {navItems.map((item) => (
-            <button
-              key={item}
-              onClick={() => scrollTo(item)}
-              className="block w-full text-left text-sm font-body text-muted-foreground hover:text-foreground transition-colors"
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center font-heading font-black text-xl text-white shadow-[0_0_20px_rgba(var(--primary-rgb),0.3)] group-hover:scale-110 transition-transform">
+            {initials}
+          </div>
+          <span className="text-xl font-heading font-black tracking-tighter text-foreground group-hover:text-primary transition-colors">
+            {name || "Portfolio"}
+          </span>
+        </motion.a>
+
+        {/* DESKTOP NAV */}
+        <nav className="hidden md:flex items-center gap-10">
+          {navItems.map((item, i) => (
+            <motion.a
+              key={item.label}
+              href={item.href}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className="text-xs font-heading font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors relative group"
             >
-              {item}
-            </button>
+              {item.label}
+              <span className="absolute -bottom-2 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full" />
+            </motion.a>
           ))}
-        </motion.div>
-      )}
-    </motion.header>
+          
+          <div className="h-6 w-px bg-white/10 mx-2" />
+          
+          <div className="flex items-center gap-4">
+            <a href="#" className="p-2 text-muted-foreground hover:text-primary transition-colors">
+              <Github size={20} />
+            </a>
+            <a href="#" className="p-2 text-muted-foreground hover:text-primary transition-colors">
+              <Linkedin size={20} />
+            </a>
+          </div>
+        </nav>
+
+        {/* MOBILE TOGGLE */}
+        <button 
+          onClick={() => setIsOpen(!isOpen)}
+          className="md:hidden w-12 h-12 rounded-xl bg-secondary border border-white/10 flex flex-col items-center justify-center gap-1.5"
+        >
+          <span className={`w-6 h-0.5 bg-foreground transition-all ${isOpen ? "rotate-45 translate-y-2" : ""}`} />
+          <span className={`w-6 h-0.5 bg-foreground transition-all ${isOpen ? "opacity-0" : ""}`} />
+          <span className={`w-6 h-0.5 bg-foreground transition-all ${isOpen ? "-rotate-45 -translate-y-2" : ""}`} />
+        </button>
+
+      </div>
+
+      {/* MOBILE MENU */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden bg-secondary/95 backdrop-blur-2xl border-b border-white/5 overflow-hidden"
+          >
+            <div className="px-6 py-10 space-y-8">
+              {navItems.map((item) => (
+                <a 
+                  key={item.label} 
+                  href={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-6 text-2xl font-heading font-black text-foreground hover:text-primary transition-colors"
+                >
+                  <item.icon size={24} className="text-primary" />
+                  {item.label}
+                </a>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+    </header>
   );
 };
 

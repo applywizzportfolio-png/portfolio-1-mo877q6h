@@ -4,63 +4,35 @@ import { SectionHeader } from "./AboutSection";
 import { Briefcase, TrendingUp, Clock, Target, ChevronRight } from "lucide-react";
 import { ThreeDCard } from "./3d/ThreeDCard";
 import { ThreeDIcon } from "./3d/ThreeDIcon";
+import { ParsedExperience, parseLines } from "@/hooks/usePortfolioData";
 
-interface Job {
-  title: string;
-  company: string;
-  location: string;
-  period: string;
-  metrics: { label: string; value: string; color: string; icon: typeof TrendingUp }[];
-  highlights: string[];
+interface ExperienceSectionProps {
+  experiences: ParsedExperience[];
 }
 
-const jobs: Job[] = [
-  {
-    title: "Data Engineer",
-    company: "Tata Consultancy Services",
-    location: "Hyderabad, India",
-    period: "Nov 2021 – Oct 2023",
-    metrics: [
-      { label: "Transactions Processed", value: "4M+", color: "hsl(var(--teal))", icon: Target },
-      { label: "Data Availability", value: "+30%", color: "hsl(var(--primary))", icon: TrendingUp },
-      { label: "Manual Effort Reduced", value: "-40%", color: "hsl(var(--accent))", icon: Clock },
-      { label: "Data Accuracy", value: "+35%", color: "hsl(var(--electric))", icon: Target },
-    ],
-    highlights: [
-      "Engineered scalable ETL pipelines using ADF and Databricks on ADLS Gen2 with medallion architecture",
-      "Optimized PySpark and Spark SQL transformations, reducing execution time by 25%",
-      "Designed analytical data models in Snowflake using star schema for Power BI dashboards",
-      "Integrated Kafka streaming with Azure Databricks for real-time analytics",
-      "Automated CI/CD deployments using Git and Azure DevOps",
-    ],
-  },
-  {
-    title: "Data Platform Engineer",
-    company: "Tata Consultancy Services",
-    location: "Mumbai, India",
-    period: "May 2019 – Oct 2021",
-    metrics: [
-      { label: "Datasets Processed", value: "3M+", color: "hsl(var(--teal))", icon: Target },
-      { label: "Manual Effort Reduced", value: "-45%", color: "hsl(var(--primary))", icon: Clock },
-      { label: "Data Quality Improved", value: "+25%", color: "hsl(var(--accent))", icon: TrendingUp },
-    ],
-    highlights: [
-      "Developed scalable data validation frameworks using Python and SQL for clinical datasets",
-      "Built reusable profiling modules to identify missing values and schema inconsistencies",
-      "Implemented reconciliation logic comparing source and target systems",
-      "Generated data quality reports using SQL and Power BI",
-    ],
-  },
-];
-
-const ExperienceSection = () => {
+const ExperienceSection = ({ experiences }: ExperienceSectionProps) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  const jobs = experiences.map(exp => ({
+    title: exp.title,
+    company: exp.company,
+    location: exp.location || "",
+    period: exp.period,
+    metrics: [
+       // Synthetic metrics for the UI design since real data often lacks these
+       { label: "Execution Efficiency", value: "+25%", color: "hsl(var(--teal))", icon: Target },
+       { label: "Performance", value: "High", color: "hsl(var(--primary))", icon: TrendingUp },
+    ],
+    highlights: parseLines(exp.bullets),
+  }));
+
+  if (jobs.length === 0) return null;
 
   return (
     <section id="experience" className="relative py-32 px-6 overflow-hidden" ref={ref}>
       <div className="max-w-7xl mx-auto">
-        <SectionHeader title="Work" accent="Experience" subtitle="Architectural Journey" />
+        <SectionHeader title="Work" accent="Experience" subtitle="Professional Journey" />
 
         <div className="relative mt-20">
           {/* Pipeline connector line */}
@@ -99,7 +71,7 @@ const ExperienceSection = () => {
                       
                       <h3 className="text-3xl font-heading font-black text-foreground mb-1">{job.title}</h3>
                       <p className="text-base text-muted-foreground font-heading font-bold mb-8 italic">
-                        {job.company} · {job.location}
+                        {job.company} {job.location ? `· ${job.location}` : ""}
                       </p>
 
                       {/* Metrics */}
@@ -139,4 +111,3 @@ const ExperienceSection = () => {
 };
 
 export default ExperienceSection;
-

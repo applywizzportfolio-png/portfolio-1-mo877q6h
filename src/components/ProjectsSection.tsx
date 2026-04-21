@@ -1,54 +1,42 @@
 import React, { useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
 import { SectionHeader } from "./AboutSection";
-import { Brain, Database, Radio, ExternalLink } from "lucide-react";
+import { Brain, Database, Radio, ExternalLink, Code } from "lucide-react";
 import { ThreeDCard } from "./3d/ThreeDCard";
 import { ThreeDIcon } from "./3d/ThreeDIcon";
+import { parseProjects } from "@/hooks/usePortfolioData";
 
-const projects = [
-  {
-    title: "AI Data Pipeline for LLM Monitoring",
-    tag: "AI / ML Ops",
-    icon: Brain,
-    image: "/project-ai-pipeline.jpg",
-    tech: ["Python", "PySpark", "Delta Lake", "Kafka", "Snowflake"],
-    metrics: ["3,000+ LLM interactions processed", "Risk classification pipeline", "20-50% unsafe response reduction"],
-    description: "Engineered a distributed pipeline processing LLM interactions with real-time ingestion via Kafka and Spark Structured Streaming.",
-    color: "var(--primary)",
-  },
-  {
-    title: "End-to-End Cloud Lakehouse Pipeline",
-    tag: "Lakehouse",
-    icon: Database,
-    image: "/project-lakehouse.jpg",
-    tech: ["ADLS Gen2", "ADF", "Databricks", "PySpark", "Snowflake"],
-    metrics: ["CDC pipelines for continuous sync", "Batch + incremental processing", "Optimized BI reporting"],
-    description: "Designed a lakehouse architecture enabling unified ingestion and transformation of structured and semi-structured data.",
-    color: "var(--teal)",
-  },
-  {
-    title: "Real-Time Transaction Analytics Platform",
-    tag: "Streaming",
-    icon: Radio,
-    image: "/project-streaming.jpg",
-    tech: ["Kafka", "Spark Streaming", "Azure Databricks", "Snowflake", "Power BI"],
-    metrics: ["High-volume streaming data", "Near real-time analytics", "Faster dashboard refreshes"],
-    description: "Built event-driven ingestion pipelines using Kafka and ADF, processing streaming data with Spark Structured Streaming.",
-    color: "var(--electric)",
-  },
-];
+interface ProjectsSectionProps {
+  projectsRaw: string;
+}
 
-const ProjectsSection = () => {
+const ProjectsSection = ({ projectsRaw }: ProjectsSectionProps) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+  
+  const parsedProjects = parseProjects(projectsRaw);
+  
+  const icons = [Brain, Database, Radio, Code];
+  const colors = ["var(--primary)", "var(--teal)", "var(--electric)", "var(--accent)"];
+
+  const projects = parsedProjects.map((p, i) => ({
+    ...p,
+    tag: "Featured Project",
+    icon: icons[i % icons.length],
+    color: colors[i % colors.length],
+    image: `https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=800&auto=format&fit=crop`, // Generic tech image
+    metrics: ["Successfully Completed", "Innovative Solution"],
+  }));
+
+  if (projects.length === 0) return null;
 
   return (
     <section id="projects" className="relative py-32 px-6 overflow-hidden" ref={ref}>
       <div className="max-w-7xl mx-auto">
-        <SectionHeader title="Featured" accent="Projects" subtitle="Data Engineering Excellence" />
+        <SectionHeader title="Featured" accent="Projects" subtitle="Portfolio Gallery" />
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
           {projects.map((project, i) => (
-            <ProjectCard key={project.title} project={project} index={i} inView={inView} />
+            <ProjectCard key={i} project={project} index={i} inView={inView} />
           ))}
         </div>
       </div>
@@ -56,7 +44,7 @@ const ProjectsSection = () => {
   );
 };
 
-const ProjectCard = ({ project, index, inView }: { project: typeof projects[0]; index: number; inView: boolean }) => {
+const ProjectCard = ({ project, index, inView }: { project: any; index: number; inView: boolean }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -108,7 +96,7 @@ const ProjectCard = ({ project, index, inView }: { project: typeof projects[0]; 
           <div className="mt-auto space-y-6">
             {/* Tech stack */}
             <div className="flex flex-wrap gap-2">
-              {project.tech.map((t) => (
+              {project.tech.map((t: string) => (
                 <span key={t} className="text-[10px] font-heading font-black uppercase tracking-tighter px-2.5 py-1 rounded-md bg-secondary/50 text-muted-foreground border border-white/5">
                   {t}
                 </span>
@@ -122,7 +110,7 @@ const ProjectCard = ({ project, index, inView }: { project: typeof projects[0]; 
               className="overflow-hidden"
             >
               <div className="space-y-3 pt-6 border-t border-white/5">
-                {project.metrics.map((m) => (
+                {project.metrics.map((m: string) => (
                   <div key={m} className="flex items-center gap-3 text-xs text-muted-foreground font-heading font-medium">
                     <div className="w-1.5 h-1.5 rounded-full shadow-[0_0_8px_rgba(0,0,0,0.5)]" style={{ background: project.color }} />
                     {m}
@@ -138,4 +126,3 @@ const ProjectCard = ({ project, index, inView }: { project: typeof projects[0]; 
 };
 
 export default ProjectsSection;
-

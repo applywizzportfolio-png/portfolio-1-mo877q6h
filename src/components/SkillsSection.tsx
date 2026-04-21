@@ -1,77 +1,58 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { SectionHeader } from "./AboutSection";
-import { Cloud, Cpu, GitBranch, Radio, Code, BarChart3 } from "lucide-react";
+import { Cloud, Cpu, GitBranch, Radio, Code, BarChart3, Database } from "lucide-react";
 import { ThreeDCard } from "./3d/ThreeDCard";
 import { ThreeDIcon } from "./3d/ThreeDIcon";
 
-const skillCategories = [
-  {
-    layer: "Cloud & Data Platforms",
-    color: "hsl(var(--primary))",
-    icon: Cloud,
-    skills: ["Azure Data Factory", "Azure Databricks", "ADLS Gen2", "Synapse Analytics", "Snowflake", "AWS S3", "AWS Glue", "Redshift"],
-  },
-  {
-    layer: "Data Processing",
-    color: "hsl(var(--teal))",
-    icon: Cpu,
-    skills: ["Apache Spark", "PySpark", "Spark SQL", "Hadoop", "Hive", "Delta Lake"],
-  },
-  {
-    layer: "ETL & Orchestration",
-    color: "hsl(var(--electric))",
-    icon: GitBranch,
-    skills: ["Azure Data Factory", "Apache Airflow", "dbt", "Change Data Capture", "Workflow Orchestration"],
-  },
-  {
-    layer: "Streaming & Real-Time",
-    color: "hsl(var(--accent))",
-    icon: Radio,
-    skills: ["Kafka", "Spark Structured Streaming", "Event-Driven Pipelines"],
-  },
-  {
-    layer: "Programming & Data Modeling",
-    color: "hsl(var(--primary))",
-    icon: Code,
-    skills: ["Python", "SQL", "Java", "Star Schema", "Snowflake Schema", "Dimensional Modeling"],
-  },
-  {
-    layer: "DevOps & Analytics",
-    color: "#00A8A8",
-    icon: BarChart3,
-    skills: ["CI/CD", "Git", "Azure DevOps", "Jenkins", "Power BI", "Data Visualization"],
-  },
-];
+interface SkillsSectionProps {
+  skills: string[];
+}
 
-const SkillsSection = () => {
+const SkillsSection = ({ skills }: SkillsSectionProps) => {
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
 
+  // Distribute skills into categories or just show a grid
+  // Simple heuristic: if we have lots of skills, split them. Otherwise just one block.
+  const categories = [
+    {
+      layer: "Core Expertise",
+      color: "hsl(var(--primary))",
+      icon: Code,
+      skills: skills.slice(0, 10),
+    },
+    {
+      layer: "Additional Tools",
+      color: "hsl(var(--teal))",
+      icon: Cpu,
+      skills: skills.slice(10),
+    }
+  ].filter(c => c.skills.length > 0);
+
+  if (skills.length === 0) return null;
+
   return (
     <section id="skills" className="relative py-32 px-6 overflow-hidden" ref={ref}>
-      {/* Background Gradients */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/5 rounded-full blur-[120px] -z-10" />
-      
       <div className="max-w-7xl mx-auto">
-        <SectionHeader title="Tech" accent="Stack" subtitle="Precision Engineering" />
-        
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
-          {skillCategories.map((cat, i) => (
+        <SectionHeader title="Technical" accent="Arsenal" subtitle="Skill Architecture" />
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+          {categories.map((cat, i) => (
             <ThreeDCard key={cat.layer}>
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
+                initial={{ opacity: 0, scale: 0.95 }}
                 animate={inView ? { opacity: 1, scale: 1 } : {}}
-                transition={{ delay: i * 0.1, duration: 0.5 }}
-                className="h-full glass border border-white/5 rounded-2xl p-8 hover:border-primary/20 transition-all flex flex-col"
+                transition={{ delay: 0.1 + i * 0.1, duration: 0.6 }}
+                className="glass rounded-3xl p-8 border border-white/5 h-full flex flex-col"
               >
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="p-3 rounded-xl bg-secondary/50 border border-white/5 shadow-inner">
-                    <ThreeDIcon icon={cat.icon} size={28} color={cat.color} />
+                <div className="flex items-center gap-4 mb-8">
+                  <div className="p-3 rounded-2xl bg-secondary border border-white/10 shadow-xl">
+                    <ThreeDIcon icon={cat.icon} size={24} color={cat.color} />
                   </div>
-                  <h3 className="text-lg font-heading font-black tracking-tight text-foreground">{cat.layer}</h3>
+                  <h3 className="font-heading font-black text-xl text-foreground tracking-tight">{cat.layer}</h3>
                 </div>
-                
+
                 <div className="flex flex-wrap gap-2.5 mt-auto">
                   {cat.skills.map((skill, si) => (
                     <motion.span
@@ -101,4 +82,3 @@ const SkillsSection = () => {
 };
 
 export default SkillsSection;
-

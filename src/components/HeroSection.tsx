@@ -2,48 +2,59 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ArrowDown, Download, Database, Zap, Server, BarChart3 } from "lucide-react";
 import { ThreeDIcon } from "./3d/ThreeDIcon";
+import { PortfolioData } from "@/hooks/usePortfolioData";
 
-const HeroSection = () => {
+interface HeroSectionProps {
+  data: PortfolioData;
+}
+
+const HeroSection = ({ data }: HeroSectionProps) => {
+  const name = data.personal?.name || "Your Name";
+  const nameParts = name.trim().split(" ");
+  const firstName = nameParts[0];
+  const lastName  = nameParts.slice(1).join(" ");
+  const role      = data.targetRole || "Portfolio";
+  const summary   = data.summary || "";
+
   return (
     <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-
       {/* Background Effects */}
       <div className="absolute top-1/4 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-[120px] animate-pulse" />
       <div className="absolute bottom-1/4 -left-20 w-72 h-72 bg-teal/10 rounded-full blur-[100px] animate-pulse" />
 
-      {/* SINGLE COLUMN CENTERED */}
       <div className="max-w-4xl mx-auto px-6 w-full text-center relative z-10">
-
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, ease: "easeOut" }}
           className="space-y-8"
         >
-
           {/* TOP BADGE */}
           <div className="flex justify-center items-center gap-4">
             <ThreeDIcon icon={Database} size={26} color="hsl(var(--primary))" />
             <div className="h-px w-16 bg-gradient-to-r from-primary to-transparent" />
             <span className="text-sm tracking-[0.4em] text-primary uppercase font-heading">
-              Data Systems Architect
+              {role}
             </span>
           </div>
 
           {/* NAME */}
           <h1 className="text-5xl md:text-7xl lg:text-8xl font-heading font-black leading-[0.9] tracking-tight">
-            <span className="gradient-text">Sowjanya</span>
-            <br />
-            <span className="text-foreground">Allam</span>
+            <span className="gradient-text">{firstName}</span>
+            {lastName && (
+              <>
+                <br />
+                <span className="text-foreground">{lastName}</span>
+              </>
+            )}
           </h1>
 
-          {/* DESCRIPTION */}
-          <p className="max-w-2xl mx-auto text-muted-foreground text-lg md:text-xl leading-relaxed">
-            Engineering robust data ecosystems using{" "}
-            <span className="text-foreground font-semibold">Azure & SnowFlake</span>. 
-            Transforming raw data into high-velocity insights through{" "}
-            <span className="text-primary italic">Lakehouse architectures</span>.
-          </p>
+          {/* SUMMARY */}
+          {summary && (
+            <p className="max-w-2xl mx-auto text-muted-foreground text-lg md:text-xl leading-relaxed">
+              {summary.length > 200 ? summary.substring(0, 200) + "…" : summary}
+            </p>
+          )}
 
           {/* BUTTONS */}
           <div className="flex flex-wrap justify-center gap-4 pt-4">
@@ -73,12 +84,14 @@ const HeroSection = () => {
             </motion.a>
           </div>
 
-          {/* STATS */}
+          {/* SKILLS PREVIEW STATS */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-10 border-t border-border/10">
             {[
-              { label: "Years Experience", value: "4+", icon: Zap },
-              { label: "Data Processed", value: "4TB+", icon: BarChart3 },
-              { label: "System Stability", value: "99.9%", icon: Database },
+              { label: "Skills", value: String(data.skills?.length || 0) + "+", icon: Zap },
+              { label: "Experience Roles", value: String(data.experiences?.length || 0), icon: BarChart3 },
+              { label: "Certifications", value: String(
+                data.certifications?.split("\n").filter(Boolean).length || 0
+              ), icon: Database },
             ].map((stat, i) => (
               <motion.div
                 key={i}
@@ -106,7 +119,6 @@ const HeroSection = () => {
               <ArrowDown size={18} className="text-primary" />
             </div>
           </motion.div>
-
         </motion.div>
       </div>
     </section>
