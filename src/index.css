@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&family=Source+Sans+3:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 97%;
+    --foreground: 222 47% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222 47% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
+
+    --primary: 230 60% 30%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 180 40% 92%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 215 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 15% 87%;
+    --input: 220 15% 87%;
+    --ring: 180 100% 33%;
+
+    --radius: 0.5rem;
+
+    --indigo: 230 60% 30%;
+    --teal: 180 100% 33%;
+    --electric: 215 100% 50%;
+    --cyan: 180 60% 45%;
+    --deep-bg: 220 20% 97%;
+
+    --sidebar-background: 220 15% 95%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 180 100% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 15% 92%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 220 15% 87%;
+    --sidebar-ring: 180 100% 33%;
+  }
+
+  .dark {
+    --background: 222 50% 5%;
+    --foreground: 200 20% 90%;
+
+    --card: 222 40% 10%;
+    --card-foreground: 200 20% 90%;
+
+    --popover: 222 40% 10%;
+    --popover-foreground: 200 20% 90%;
+
+    --primary: 230 60% 30%;
+    --primary-foreground: 180 60% 90%;
+
+    --secondary: 180 100% 33%;
+    --secondary-foreground: 222 50% 5%;
+
+    --muted: 222 30% 15%;
+    --muted-foreground: 200 15% 55%;
+
+    --accent: 215 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 222 30% 18%;
+    --input: 222 30% 18%;
+    --ring: 180 100% 33%;
+
+    --indigo: 230 60% 30%;
+    --teal: 180 100% 33%;
+    --electric: 215 100% 50%;
+    --cyan: 168 75% 69%;
+    --deep-bg: 222 50% 5%;
+
+    --sidebar-background: 222 40% 8%;
+    --sidebar-foreground: 200 20% 90%;
+    --sidebar-primary: 180 100% 33%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 222 30% 15%;
+    --sidebar-accent-foreground: 200 20% 90%;
+    --sidebar-border: 222 30% 18%;
+    --sidebar-ring: 180 100% 33%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground transition-colors duration-500;
+    font-family: 'Inter', 'Source Sans 3', sans-serif;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'IBM Plex Sans', sans-serif;
+  }
+}
+
+@layer utilities {
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--electric)), hsl(var(--cyan)));
+  }
+  .gradient-text-warm {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--indigo)), hsl(var(--electric)));
+  }
+  .gradient-border {
+    border-image: linear-gradient(135deg, hsl(var(--indigo)), hsl(var(--electric)), hsl(var(--teal))) 1;
+  }
+  .gradient-bg {
+    background: linear-gradient(135deg, hsl(var(--indigo)), hsl(var(--electric)));
+  }
+  .gradient-bg-teal {
+    background: linear-gradient(135deg, hsl(var(--teal)), hsl(var(--cyan)));
+  }
+  .glow-teal {
+    box-shadow: 0 0 20px hsl(var(--teal) / 0.3), 0 0 60px hsl(var(--teal) / 0.1);
+  }
+  .glow-blue {
+    box-shadow: 0 0 20px hsl(var(--electric) / 0.3), 0 0 60px hsl(var(--electric) / 0.1);
+  }
+  .glass {
+    @apply bg-card/60 backdrop-blur-xl border border-border/50;
+  }
+
+  /* 3D Card effects */
+  .card-3d {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+    transition: transform 0.4s ease, box-shadow 0.4s ease;
+  }
+  .card-3d:hover {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+    box-shadow: 0 20px 40px hsl(var(--teal) / 0.15), 0 0 30px hsl(var(--electric) / 0.1);
+  }
+  .card-3d-subtle {
+    transform-style: preserve-3d;
+    perspective: 800px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card-3d-subtle:hover {
+    transform: translateY(-4px) rotateX(1deg);
+    box-shadow: 0 12px 24px hsl(var(--teal) / 0.1);
+  }
+  .icon-3d {
+    transition: transform 0.3s ease, filter 0.3s ease;
+  }
+  .icon-3d:hover {
+    transform: translateZ(10px) scale(1.15) rotateY(-10deg);
+    filter: drop-shadow(0 4px 8px hsl(var(--teal) / 0.4));
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: hsl(var(--deep-bg)); }
+::-webkit-scrollbar-thumb { background: hsl(var(--indigo)); border-radius: 3px; }
+
+/* Selection */
+::selection {
+  background: hsl(var(--teal) / 0.3);
+  color: hsl(var(--cyan));
+}
+
+html {
+  scroll-behavior: smooth;
+}
